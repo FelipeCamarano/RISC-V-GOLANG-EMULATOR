@@ -1,0 +1,9 @@
+# Build
+bin/
+*.exe
+*.out
+
+# Cache
+*.test
+*.log
+vendor/
