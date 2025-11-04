@@ -8,7 +8,7 @@ import (
 func main() {
     fmt.Println("RISC-V Emulator iniciado!")
 
-    raw := uint32(0b0000000_01011_00010_000_00000_0110011)
+    raw := uint32(0b0100000_01011_00010_000_00000_0110011)
     inst := cpu.Decode(raw)
 
     var cpu cpu.CPU

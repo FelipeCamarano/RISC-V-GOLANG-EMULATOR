@@ -12,6 +12,7 @@ var FuncTable = map[InstrType]ExecFn{
 var rTypeTable = map[uint8]map[uint8]ExecFn{
 	0x0: {
 		0x00: execADD,
+		0x20: execSUB,
 	},
 }
 

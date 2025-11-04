@@ -1,7 +1,7 @@
 package cpu
 
 type CPU struct {
-	Registers [32]uint32
+	Registers [32]int32
 }
 
 func (cpu *CPU) Execute(inst Instruction) {
