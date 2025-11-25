@@ -14,7 +14,7 @@ var opcodeTypeMap = map[uint8]InstrType{
 	0x17: U_TYPE, // 0b 0001_0111
 }
 
-func Decode(raw uint32) Instruction {
+func (cpu *CPU) Decode(raw uint32) Instruction {
 	inst := Instruction{}
 
 	inst.Opcode = uint8(raw & opcodeMask)
