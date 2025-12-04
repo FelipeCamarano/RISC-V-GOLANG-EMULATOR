@@ -12,6 +12,8 @@ type CPU struct {
 	PC           RegisterValue
 	AddressAdder int32
 	rdInterface  bus.ReaderWriter
+
+	Stopped bool
 }
 
 func NewCPU(b bus.ReaderWriter) *CPU {
@@ -20,6 +22,8 @@ func NewCPU(b bus.ReaderWriter) *CPU {
 		PC:           0,
 		AddressAdder: 0,
 		rdInterface:  b,
+
+		Stopped: false,
 	}
 }
 
@@ -30,6 +34,7 @@ func (cpu *CPU) Step() {
 	cpu.AddressAdder = 4
 	var raw uint32 = cpu.Fetch()
 	inst := cpu.Decode(raw)
+
 	fmt.Printf("\ninst: %b\n", inst)
 
 	fmt.Printf("Opcode:  0x%02X\n", inst.Opcode)
@@ -47,6 +52,7 @@ func (cpu *CPU) Step() {
 	fmt.Printf("CPU Rs1:   %d\n", cpu.Registers[inst.Rs1])
 	fmt.Printf("CPU Rs2:   %d\n", cpu.Registers[inst.Rs2])
 	fmt.Printf("CPU Rd:    %d\n", cpu.Registers[inst.Rd])
+
 }
 
 func (cpu *CPU) Execute(inst Instruction) {
@@ -68,7 +74,6 @@ func (cpu *CPU) Fetch() uint32 {
 	result |= uint32(rdInterface.ReadByte(uint32(pc)+1)) << 8
 	result |= uint32(rdInterface.ReadByte(uint32(pc)+2)) << 16
 	result |= uint32(rdInterface.ReadByte(uint32(pc)+3)) << 24
-	fmt.Printf("\n %032b\n", result)
 	return result
 }
 

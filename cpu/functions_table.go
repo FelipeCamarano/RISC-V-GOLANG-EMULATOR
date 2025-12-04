@@ -1,5 +1,7 @@
 package cpu
 
+import "fmt"
+
 type ExecFn func(cpu *CPU, inst Instruction)
 
 var FuncTable = map[InstrType]ExecFn{
@@ -105,6 +107,29 @@ func execIJALR(cpu *CPU, inst Instruction) {
 
 func execISystem(cpu *CPU, inst Instruction) {
 	// TODO: Implementar chamadas de sistema (ECALL)
+	// 0x73 is the opcode for SYSTEM instructions.
+	// In these tests, an ECALL with imm=0 indicates the end of the test.
+
+	// Only handle ECALL (Environment Call) which usually has Imm=0
+	// (You can add stricter checks for Imm==0 or Imm==1 for EBREAK if needed)
+
+	// 1. Get the result code from Register x10 (a0)
+	//    0 = Success
+	//    Anything else = The test number that failed
+	result := cpu.Registers[10]
+
+	// 2. Get the current test case number from Register x3 (gp)
+	//    Useful for debugging if result != 0
+	testNum := cpu.Registers[3]
+
+	if result == 0 {
+		fmt.Printf("\n[SUCCESS] Test Passed! All logic checks correct.\n")
+	} else {
+		fmt.Printf("\n[FAILURE] Test Failed at Case #%d (Error Code: %d)\n", testNum, result)
+	}
+
+	// 3. Stop the CPU
+	cpu.Stopped = true
 }
 
 // ======================================
