@@ -1,4 +1,5 @@
 # RISC-V Golang Emulator
+
 [![Ask DeepWiki](https://devin.ai/assets/askdeepwiki.png)](https://deepwiki.com/felipecamarano/risc-v-golang-emulator)
 
 Este repositório contém um emulador RISC-V (RV32I) escrito em Go. Ele simula de forma abrangente o hardware, incluindo CPU, barramento do sistema e vários tipos de memória (RAM, ROM, VRAM). O emulador possui uma interface gráfica construída com o toolkit Fyne, oferecendo visualização em tempo real e controle sobre o processo de emulação.
@@ -20,20 +21,24 @@ Este repositório contém um emulador RISC-V (RV32I) escrito em Go. Ele simula d
 ## Primeiros Passos
 
 ### Pré-requisitos
+
 * Go 1.25 ou superior.
+* Compilador C 64 bits compatível com GCC, necessário para compilar as dependências nativas da GUI (Fyne).
+  * **Windows:** testado com `gcc (tdm64-1) 10.3.0`.
 
 ### Instalação e Execução
 
 1. Clone o repositório:
-    ```sh
-    git clone https://github.com/felipecamarano/risc-v-golang-emulator.git
-    cd risc-v-golang-emulator
-    ```
+  
+      git clone https://github.com/felipecamarano/risc-v-golang-emulator.git
+      cd risc-v-golang-emulator
+  
 2. Execute o emulador:
-    ```sh
-    go run main.go
-    ```
-    Isso abrirá a janela principal da GUI. O emulador inicia carregando o arquivo `bios.bin`.
+  
+      go run main.go
+  
+  Isso abrirá a janela principal da GUI. O emulador inicia carregando o arquivo `bios.bin`.
+  
 
 ## Uso
 
