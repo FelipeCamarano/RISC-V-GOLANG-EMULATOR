@@ -44,3 +44,10 @@ func (v *VRAM) DumpToTerminal() {
         }
     }
 }
+
+func (v *VRAM) Reset() {
+	for i := range v.data {
+		v.data[i] = 0
+	}
+	v.Dirty = false
+}

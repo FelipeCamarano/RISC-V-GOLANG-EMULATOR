@@ -26,3 +26,9 @@ func (r *RAM) WriteByte(offset uint32, data Byte) {
 		r.data[offset] = data
 	}
 }
+
+func (r *RAM) Reset() {
+	for i := range r.data {
+		r.data[i] = 0
+	}
+}

@@ -20,7 +20,8 @@ type EmulatorApp struct {
 }
 
 func New(mb *motherboard.Motherboard) *EmulatorApp {
-	a := app.New()
+	a := app.NewWithID("com.dainslash.riscv.emulator")
+	
 	emu := &EmulatorApp{
 		FyneApp: a,
 		Mb:      mb,
@@ -34,39 +35,48 @@ func (e *EmulatorApp) Run() {
 		tWindow := windows.NewTestRunnerWindow(e.FyneApp, e.LoadAndDebug)
 		tWindow.Show()
 	}
+	
+	loadCartridgeCallback := func(path string) {
+		e.LoadCartridge(path)
+	}
 
-	e.MainWindow.Build(openTestsCallback)
+	e.MainWindow.Build(openTestsCallback, loadCartridgeCallback)
 	e.MainWindow.Show()
 	e.FyneApp.Run()
 }
 
 func (e *EmulatorApp) LoadAndDebug(path string) {
-	fmt.Println("Tentando carregar debug para:", path)
-
+	fmt.Println("Operador: Injetando Teste de Debug ->", path)
 	e.MainWindow.IsRunning = false
-	e.resetCPU()
+	
+	e.Mb.Reset()
 
 	startPC, err := utils.LoadHexFile(path, e.Mb)
 	
 	if err != nil {
-		dialog.ShowError(fmt.Errorf("Falha ao carregar HEX:\n%s", err.Error()), e.MainWindow.Window)
-		fmt.Println("Erro no Load:", err)
+		dialog.ShowError(fmt.Errorf("Erro ao injetar HEX:\n%s", err.Error()), e.MainWindow.Window)
 		return
 	}
-
-	e.Mb.CPU.SetPC(startPC)
 	
+	e.Mb.CPU.SetPC(startPC)
 	e.MainWindow.UpdateData()
 	
 	filename := filepath.Base(path)
 	e.MainWindow.Window.SetTitle("RISC-V Monitor - Debugging: " + filename)
 	
-	fmt.Printf("Sucesso! PC inicial: 0x%08X\n", startPC)
+	fmt.Printf("Sucesso! Debugger conectado. PC: 0x%08X\n", startPC)
 }
 
-func (e *EmulatorApp) resetCPU() {
-	e.Mb.CPU.PC = 0
-	for i := range e.Mb.CPU.Registers {
-		e.Mb.CPU.Registers[i] = 0
+func (e *EmulatorApp) LoadCartridge(path string) {
+	fmt.Println("Operador: Inserindo Cartucho ->", path)
+
+	if err := e.Mb.InsertCartridge(path); err != nil {
+		dialog.ShowError(err, e.MainWindow.Window)
+		return
 	}
+
+	e.Mb.Reset()
+	
+	e.MainWindow.UpdateData()
+	fmt.Println("Sistema Resetado. Bootloader (BIOS) iniciado.")
 }

@@ -9,14 +9,16 @@ type RegisterValue uint32
 type CPU struct {
 	Registers    [32]RegisterValue
 	PC           RegisterValue
+	ResetVector  RegisterValue
 	AddressAdder int32
 	rdInterface  bus.ReaderWriter
 }
 
-func NewCPU(b bus.ReaderWriter) *CPU {
+func NewCPU(b bus.ReaderWriter, resetVector uint32) *CPU {
 	return &CPU{
 		Registers:    [32]RegisterValue{},
 		PC:           0,
+		ResetVector:  RegisterValue(resetVector),
 		AddressAdder: 0,
 		rdInterface:  b,
 	}
@@ -82,4 +84,11 @@ func (cpu *CPU) nextPC(adder int32) {
 
 func (cpu *CPU) SetPC(addr uint32) {
 	cpu.PC = RegisterValue(int32(addr))
+}
+
+func (cpu *CPU) Reset() {
+	cpu.PC = cpu.ResetVector
+	for i := range cpu.Registers {
+		cpu.Registers[i] = 0
+	}	
 }

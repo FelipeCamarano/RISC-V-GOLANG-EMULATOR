@@ -35,7 +35,7 @@ func NewMotherboard(biosPath string) (*Motherboard, error) {
 	systemBus.MapDevice(BIOS_START, bios)
 
 
-	core := cpu.NewCPU(systemBus)
+	core := cpu.NewCPU(systemBus, BIOS_START)
 	core.PC = cpu.RegisterValue(BIOS_START) 
 
 	mb := &Motherboard{
@@ -58,4 +58,10 @@ func (mb *Motherboard) InsertCartridge(path string) error {
 	mb.Bus.MapDevice(CARTRIDGE_START, cart)
 	fmt.Printf("Cartucho inserido: %s em 0x%X\n", path, CARTRIDGE_START)
 	return nil
+}
+
+func (mb *Motherboard) Reset() {
+	mb.CPU.Reset()
+	mb.RAM.Reset()
+	mb.VRAM.Reset()
 }
