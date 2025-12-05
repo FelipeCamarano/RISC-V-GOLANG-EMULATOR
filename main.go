@@ -2,34 +2,27 @@ package main
 
 import (
 	"fmt"
+	"log"
 
-	"github.com/DainSlash/RISC-V-GOLANG-EMULATOR/memory"
+	"github.com/DainSlash/RISC-V-GOLANG-EMULATOR/gui"
 	"github.com/DainSlash/RISC-V-GOLANG-EMULATOR/motherboard"
 )
 
 func main() {
+	fmt.Println("Iniciando RISC-V Emulator...")
 
-	fmt.Println("RISC-V Emulator iniciado!")
-
-	programas := []memory.Byte{
-		0b10110011,
-		0b10000001,
-		0b00100000,
-		0b00000000,
-		// soma R1 + R2 -> R3
+	// 1. Setup do Hardware
+	mb, err := motherboard.NewMotherboard("bios.bin")
+	if err != nil {
+		log.Fatalf("Erro crítico de Boot: %v", err)
 	}
 
-	mainboard := motherboard.NewMotherboard(motherboard.DefaultRAMSize, memory.BootProgram())
+	// Injeta valores para teste
+	mb.CPU.Registers[1] = 10
+	mb.CPU.Registers[2] = 3
 
-	for i := 0; i < len(programas); i++ {
-		b := mainboard.ROM.ReadByte(uint32(i))
-		fmt.Printf("ROM[%d] = %08b (0x%02X)\n", i, b, b)
-	}
 
-	mainboard.IntialBOOT()
-	mainboard.CPU.Registers[1] = 10
-	mainboard.CPU.Registers[2] = 3
-	mainboard.CPU.Registers[3] = 6
-	mainboard.CPU.Step()
-
+	// 2. Interface
+	app := gui.New(mb)
+	app.Run()
 }
