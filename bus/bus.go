@@ -35,15 +35,21 @@ func (b *Bus) MapDevice(start uint32, dev memory.Device) {
     if size == 0 {
         return
     }
-
     end := start + size - 1
+
+    for i := range b.devices {
+        if b.devices[i].start == start {
+            b.devices[i].dev = dev
+            b.devices[i].end = end
+            return
+        }
+    }
 
     m := deviceMapping{
         start: start,
         end:   end,
         dev:   dev,
     }
-
     b.devices = append(b.devices, m)
 }
 

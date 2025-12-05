@@ -11,13 +11,12 @@ type Motherboard struct {
 	CPU  *cpu.CPU
 	Bus  *bus.Bus
 	
-	// Componentes
-	RAM  *memory.RAM
-	VRAM *memory.VRAM
-	BIOS *memory.ROM
+	RAM       *memory.RAM
+	VRAM      *memory.VRAM
+	IO        *memory.RAM 
+	BIOS      *memory.ROM
 	Cartridge *memory.ROM
 }
-
 
 func NewMotherboard(biosPath string) (*Motherboard, error) {
 	systemBus := bus.NewBus()
@@ -29,11 +28,12 @@ func NewMotherboard(biosPath string) (*Motherboard, error) {
 
 	mainRAM := memory.NewRAM(RAM_LIMIT - RAM_START + 1)
 	videoRAM := memory.NewVRAM(VRAM_LIMIT - VRAM_START + 1)
-
+	ioDevice := memory.NewRAM(IO_LIMIT - IO_START + 1)
+	
 	systemBus.MapDevice(RAM_START, mainRAM)
 	systemBus.MapDevice(VRAM_START, videoRAM)
+	systemBus.MapDevice(IO_START, ioDevice) 
 	systemBus.MapDevice(BIOS_START, bios)
-
 
 	core := cpu.NewCPU(systemBus, BIOS_START)
 	core.PC = cpu.RegisterValue(BIOS_START) 
@@ -43,6 +43,7 @@ func NewMotherboard(biosPath string) (*Motherboard, error) {
 		Bus:  systemBus,
 		RAM:  mainRAM,
 		VRAM: videoRAM,
+		IO:   ioDevice, 
 		BIOS: bios,
 	}
 
@@ -64,4 +65,5 @@ func (mb *Motherboard) Reset() {
 	mb.CPU.Reset()
 	mb.RAM.Reset()
 	mb.VRAM.Reset()
+	mb.IO.Reset()
 }

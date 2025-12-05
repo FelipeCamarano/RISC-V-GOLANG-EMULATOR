@@ -59,7 +59,7 @@ func (e *EmulatorApp) LoadAndDebug(path string) {
 	}
 	
 	e.Mb.CPU.SetPC(startPC)
-	e.MainWindow.UpdateData()
+	e.MainWindow.UpdateUI(true)
 	
 	filename := filepath.Base(path)
 	e.MainWindow.Window.SetTitle("RISC-V Monitor - Debugging: " + filename)
@@ -70,6 +70,8 @@ func (e *EmulatorApp) LoadAndDebug(path string) {
 func (e *EmulatorApp) LoadCartridge(path string) {
 	fmt.Println("Operador: Inserindo Cartucho ->", path)
 
+	e.MainWindow.IsRunning = false
+
 	if err := e.Mb.InsertCartridge(path); err != nil {
 		dialog.ShowError(err, e.MainWindow.Window)
 		return
@@ -77,6 +79,6 @@ func (e *EmulatorApp) LoadCartridge(path string) {
 
 	e.Mb.Reset()
 	
-	e.MainWindow.UpdateData()
+	e.MainWindow.UpdateUI(true)
 	fmt.Println("Sistema Resetado. Bootloader (BIOS) iniciado.")
 }

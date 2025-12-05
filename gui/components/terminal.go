@@ -3,6 +3,7 @@ package components
 import (
 	"image/color"
 	"strings"
+	"fmt"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/canvas"
@@ -38,10 +39,13 @@ func (t *Terminal) CheckOutput() {
 	val := t.Mb.Bus.ReadByte(motherboard.IO_START)
 	
 	if val != 0 {
+		fmt.Printf("Terminal: Lendo byte da porta IO: 0x%X\n", val)
 		char := rune(val)
 		
-		t.Buffer.WriteRune(char)
-		t.Output.SetText(t.Buffer.String() + "_")
+		fyne.Do(func() {
+			t.Buffer.WriteRune(char)
+			t.Output.SetText(t.Buffer.String() + "_")
+		})
 		
 		t.Mb.Bus.WriteByte(motherboard.IO_START, 0)
 	}
